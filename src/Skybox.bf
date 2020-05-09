@@ -24,7 +24,7 @@ namespace BeefGrunio
 
 			SDL.RenderCopy(gGameApp.mRenderer, image.mTexture, &srcRect, &destRect);
 
-			if (x - gGameApp.mScreen.w <= image.mSurface.w * -14)
+			if (x - gGameApp.mScreen.w <= image.mSurface.w * -13.6f)
 			{
 				posX = 0;
 			}

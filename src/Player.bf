@@ -1,4 +1,5 @@
 using SDL2;
+using System;
 
 namespace BeefGrunio
 {
@@ -13,6 +14,7 @@ namespace BeefGrunio
 		public bool isDida;
 
 		public float moveTime;
+		public int Health = 3;
 
 		float framesCount;
 
@@ -70,6 +72,11 @@ namespace BeefGrunio
 			}
 
 			SDL.RenderCopy(gGameApp.mRenderer, image.mTexture, &srcRect, &destRect);
+
+			if (Health <= 0)
+			{
+				posX = 9999;
+			}
 		}
 
 		public bool IsTouchingRightSide()

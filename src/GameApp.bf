@@ -15,7 +15,7 @@ namespace BeefGrunio
 		World world ~ delete _;
 
 		List <Entity> entities = new List<Entity>() ~ DeleteContainerAndItems!(_);
-		Player player;
+		public Player ActivePlayer;
 
 		bool isSwitchKeyDown;
 
@@ -25,11 +25,11 @@ namespace BeefGrunio
 
 			skybox = new Skybox();
 			world = new World();
-			player = new Player();
-			AddEntity(player);
+			ActivePlayer = new Player();
+			AddEntity(ActivePlayer);
 
-			player.posX = gGameApp.mWidth / 2;
-			player.posY = 550;
+			ActivePlayer.posX = gGameApp.mWidth / 2;
+			ActivePlayer.posY = 550;
 		}
 
 		public ~this()
@@ -63,7 +63,7 @@ namespace BeefGrunio
 			float deltaX = 0;
 			float moveSpeed = Player.MoveSpeed;
 
-			if (player.moveTime < Player.SprintDelay)
+			if (ActivePlayer.moveTime < Player.SprintDelay)
 			{
 				moveSpeed *= 0.5f;
 			}
@@ -71,31 +71,31 @@ namespace BeefGrunio
 			if (IsKeyDown(.Left))
 			{
 				deltaX -= moveSpeed;
-				player.isGoingLeft = true;
+				ActivePlayer.isGoingLeft = true;
 			}
 
-			if (IsKeyDown(.Right) && !player.IsTouchingRightSide())
+			if (IsKeyDown(.Right) && !ActivePlayer.IsTouchingRightSide())
 			{
 				deltaX += moveSpeed;
-				player.isGoingLeft = false;
+				ActivePlayer.isGoingLeft = false;
 			}
 
 			if (deltaX != 0)
 			{
-				player.posX = Math.Clamp(player.posX + deltaX, 10, mWidth - 10);
-				player.isMoving = true;
-				player.moveTime += 1;
+				ActivePlayer.posX = Math.Clamp(ActivePlayer.posX + deltaX, 10, mWidth - 10);
+				ActivePlayer.isMoving = true;
+				ActivePlayer.moveTime += 1;
 			}
 			else
 			{
-				player.isMoving = false;
-				player.moveTime = 0;
+				ActivePlayer.isMoving = false;
+				ActivePlayer.moveTime = 0;
 			}
 
 			// Switch
 			if (IsKeyDown(.Space) && !isSwitchKeyDown)
 			{
-				player.isDida ^= true;
+				ActivePlayer.isDida ^= true;
 				isSwitchKeyDown = true;
 			}
 
@@ -109,10 +109,15 @@ namespace BeefGrunio
 		{
 			base.Update();
 
-			HandleInputs();
-
 			// Sky box movement
 			skybox.posX -= Math.Clamp(skybox.posX - Skybox.SkyboxSpeed, 2, mWidth - 10);
+			HandleInputs();
+			CarrotSpawner();		
+		}
+
+		void CarrotSpawner()
+		{
+
 		}
 	}
 }
