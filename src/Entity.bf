@@ -5,6 +5,8 @@ namespace BeefGrunio
 		public float posX;
 		public float posY;
 
+		public bool ignoreRenderer;
+
 		public bool IsOffscreen(float marginX, float marginY)
 		{
 			return ((posX < -marginX) || (posX >= gGameApp.mWidth + marginX) ||

@@ -14,10 +14,19 @@ namespace BeefGrunio
 		Skybox skybox ~ delete _;
 		World world ~ delete _;
 
-		List <Entity> entities = new List<Entity>() ~ DeleteContainerAndItems!(_);
 		public Player ActivePlayer;
 
+		List <Entity> entities = new List<Entity>() ~ DeleteContainerAndItems!(_);
+		List <Carrot> carrots = new List<Carrot>() ~ DeleteContainerAndItems!(_);
+
 		bool isSwitchKeyDown;
+
+		// Carrots data
+		const float CarrotSpawnFrequency = 120;
+		float currentSpawnerTimer;
+		int lastCarrot;
+
+		Random randomizer ~ delete _;
 
 		public this()
 		{
@@ -30,6 +39,16 @@ namespace BeefGrunio
 
 			ActivePlayer.posX = gGameApp.mWidth / 2;
 			ActivePlayer.posY = 550;
+
+			randomizer = new Random(DateTime.Now.Millisecond);
+			currentSpawnerTimer = CarrotSpawnFrequency;
+
+			for (int i = 0; i <= 10; i++)
+			{
+				Carrot carrot = new Carrot();
+				carrots.Add(carrot);
+				entities.Add(carrot);
+			}
 		}
 
 		public ~this()
@@ -112,12 +131,36 @@ namespace BeefGrunio
 			// Sky box movement
 			skybox.posX -= Math.Clamp(skybox.posX - Skybox.SkyboxSpeed, 2, mWidth - 10);
 			HandleInputs();
-			CarrotSpawner();		
+			CarrotSpawner();
+
+			for (var carrot in carrots)
+				carrot.Update();
 		}
 
 		void CarrotSpawner()
 		{
+			currentSpawnerTimer++;
+			if (currentSpawnerTimer < CarrotSpawnFrequency)
+				return;
 
+			currentSpawnerTimer = 0;
+
+			Carrot carrot = carrots[lastCarrot];
+			carrot.Start(GetRandomNumber(), GetRandomPosition());
+
+			lastCarrot++;
+			if (lastCarrot > carrots.Count - 1)
+				lastCarrot = 0;
+		}
+
+		int GetRandomNumber()
+		{
+			return randomizer.Next(0, 11);
+		}
+
+		float GetRandomPosition()
+		{
+			return (float)randomizer.Next(0, mWidth);
 		}
 	}
 }

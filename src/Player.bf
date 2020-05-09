@@ -5,9 +5,9 @@ namespace BeefGrunio
 {
 	class Player : Entity
 	{
-		public const float MoveSpeed = 4f;
+		public const float MoveSpeed = 8f;
 		public const int AnimationSpeed = 8;
-		public const float SprintDelay = 16;
+		public const float SprintDelay = 32;
 
 		public bool isMoving;
 		public bool isGoingLeft;
@@ -59,7 +59,7 @@ namespace BeefGrunio
 				{
 					int frame = framesCount <= AnimationSpeed / 2 ? 0 : 1;
 					image = Images.Grunio[frame];
-				}
+				}					 
 			}
 
 			SDL.Rect srcRect = .(0, 0, image.mSurface.w, image.mSurface.h);

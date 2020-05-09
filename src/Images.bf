@@ -16,6 +16,10 @@ namespace BeefGrunio
 		public static List<Image> Dida = new .() ~ delete _;
 		public static List<Image> DidaL = new .() ~ delete _;
 
+		// Carrots
+		public static Image Orange;
+		public static Image White;
+
 		static List<Image> images = new .() ~ delete _;
 
 		public static Result<Image> Load(StringView fileName)
@@ -45,6 +49,10 @@ namespace BeefGrunio
 			Dida.Add(Try!(Load("images/dida_1.png")));
 			DidaL.Add(Try!(Load("images/dida_0_l.png")));
 			DidaL.Add(Try!(Load("images/dida_1_l.png")));
+
+			Orange = Try!(Load("images/orange.png"));
+			White = Try!(Load("images/white.png"));
+			
 			return .Ok;
 		}
 
