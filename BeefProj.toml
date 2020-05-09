@@ -1,0 +1,7 @@
+FileVersion = 1
+Dependencies = {corlib = "*", SDL2 = "*"}
+
+[Project]
+Name = "BeefGrunio"
+TargetType = "BeefGUIApplication"
+StartupObject = "BeefGrunio.Program"

@@ -1,0 +1,5 @@
+FileVersion = 1
+Projects = {BeefGrunio = {Path = "."}, SpaceGame = {Path = "../../../Documents/Beef/Samples/SpaceGame"}}
+
+[Workspace]
+StartupProject = "BeefGrunio"
