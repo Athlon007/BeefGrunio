@@ -69,7 +69,7 @@ namespace BeefGrunio
 				player.isGoingLeft = true;
 			}
 
-			if (IsKeyDown(.Right))
+			if (IsKeyDown(.Right) && !player.IsOffscreen(-150,0))
 			{
 				deltaX += moveSpeed;
 				player.isGoingLeft = false;
