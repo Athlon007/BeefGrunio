@@ -160,7 +160,7 @@ namespace BeefGrunio
 
 		float GetRandomPosition()
 		{
-			return (float)randomizer.Next(0, mWidth);
+			return (float)randomizer.Next(0, mWidth - 60);
 		}
 	}
 }
