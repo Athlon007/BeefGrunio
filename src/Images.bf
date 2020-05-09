@@ -33,7 +33,7 @@ namespace BeefGrunio
 
 		public static Result<void> Init()
 		{
-			World1 = Try!(Load("images/world1.bmp"));
+			World1 = Try!(Load("images/world1.png"));
 			Sky = Try!(Load("images/sky.bmp"));
 
 			Grunio.Add(Try!(Load("images/grunio_0.png")));

@@ -12,6 +12,7 @@ namespace BeefGrunio
 	class GameApp : SDLApp
 	{
 		Skybox skybox ~ delete _;
+		World world ~ delete _;
 
 		List <Entity> entities = new List<Entity>() ~ DeleteContainerAndItems!(_);
 		Player player;
@@ -23,6 +24,7 @@ namespace BeefGrunio
 			gGameApp = this;
 
 			skybox = new Skybox();
+			world = new World();
 			player = new Player();
 			AddEntity(player);
 
@@ -44,7 +46,7 @@ namespace BeefGrunio
 		public override void Draw()
 		{
 			skybox.Draw();
-			Draw(Images.World1, 0, 0);
+			world.Draw();
 
 			for (var entity in entities)
 				entity.Draw();
