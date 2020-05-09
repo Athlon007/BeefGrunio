@@ -11,6 +11,8 @@ namespace BeefGrunio
 
 	class GameApp : SDLApp
 	{
+		Skybox skybox ~ delete _;
+
 		List <Entity> entities = new List<Entity>() ~ DeleteContainerAndItems!(_);
 		Player player;
 
@@ -20,6 +22,7 @@ namespace BeefGrunio
 		{
 			gGameApp = this;
 
+			skybox = new Skybox();
 			player = new Player();
 			AddEntity(player);
 
@@ -40,7 +43,7 @@ namespace BeefGrunio
 
 		public override void Draw()
 		{
-			Draw(Images.Sky, 0, 0);
+			skybox.Draw();
 			Draw(Images.World1, 0, 0);
 
 			for (var entity in entities)
@@ -69,7 +72,7 @@ namespace BeefGrunio
 				player.isGoingLeft = true;
 			}
 
-			if (IsKeyDown(.Right) && !player.IsOffscreen(-150,0))
+			if (IsKeyDown(.Right) && !player.IsTouchingRightSide())
 			{
 				deltaX += moveSpeed;
 				player.isGoingLeft = false;
@@ -105,6 +108,9 @@ namespace BeefGrunio
 			base.Update();
 
 			HandleInputs();
+
+			// Sky box movement
+			skybox.posX -= Math.Clamp(skybox.posX - Skybox.SkyboxSpeed, 2, mWidth - 10);
 		}
 	}
 }

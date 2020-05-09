@@ -71,5 +71,10 @@ namespace BeefGrunio
 
 			SDL.RenderCopy(gGameApp.mRenderer, image.mTexture, &srcRect, &destRect);
 		}
+
+		public bool IsTouchingRightSide()
+		{
+			return (posX >= gGameApp.mWidth - 150);
+		}
 	}
 }
