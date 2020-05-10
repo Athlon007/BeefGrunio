@@ -8,6 +8,7 @@ namespace BeefGrunio
 	{
 		// World
 		public static Image World1;
+		public static Image World2;
 		public static Image Sky;
 
 		// Player
@@ -19,6 +20,9 @@ namespace BeefGrunio
 		// Carrots
 		public static Image Orange;
 		public static Image White;
+
+		// Heart
+		public static Image Heart;
 
 		static List<Image> images = new .() ~ delete _;
 
@@ -38,6 +42,7 @@ namespace BeefGrunio
 		public static Result<void> Init()
 		{
 			World1 = Try!(Load("images/world1.png"));
+			World2 = Try!(Load("images/world2.png"));
 			Sky = Try!(Load("images/sky.bmp"));
 
 			Grunio.Add(Try!(Load("images/grunio_0.png")));
@@ -52,6 +57,8 @@ namespace BeefGrunio
 
 			Orange = Try!(Load("images/orange.png"));
 			White = Try!(Load("images/white.png"));
+
+			Heart = Try!(Load("images/heart.png"));
 			
 			return .Ok;
 		}

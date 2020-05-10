@@ -15,6 +15,25 @@ namespace BeefGrunio
 		World world ~ delete _;
 
 		public Player ActivePlayer;
+		int score;
+		public int Score
+		{
+			get
+			{
+				return score;
+			}
+			set
+			{
+				score = value;
+
+				if (score > 2)
+				{
+					HardMode = true;
+				}
+			}
+		}
+		public bool HardMode;
+
 
 		List <Entity> entities = new List<Entity>() ~ DeleteContainerAndItems!(_);
 		List <Carrot> carrots = new List<Carrot>() ~ DeleteContainerAndItems!(_);
@@ -27,6 +46,8 @@ namespace BeefGrunio
 		int lastCarrot;
 
 		Random randomizer ~ delete _;
+
+		Font font ~ delete _;
 
 		public this()
 		{
@@ -60,6 +81,64 @@ namespace BeefGrunio
 		{
 			base.Init();
 			Images.Init();
+			font = new Font();
+			font.Load("font.ttf", 24);
+		}
+
+		public enum TextAlign { Left, Center, Right };
+		public void DrawString(float x, float y, String str, SDL.Color color, TextAlign align = TextAlign.Left)
+		{
+			var x;
+
+			SDL.SetRenderDrawColor(mRenderer, 255, 255, 255, 255);
+			let surface = SDLTTF.RenderUTF8_Blended(font.mFont, str, color);
+			let texture = SDL.CreateTextureFromSurface(mRenderer, surface);
+			SDL.Rect srcRect = .(0, 0, surface.w, surface.h);
+
+			if (align != TextAlign.Left)
+			{
+				if (align == TextAlign.Center)
+					x -= surface.w / 2;
+				else if (align == TextAlign.Right && str.Length > 1)
+					x -= 25 * str.Length;
+			}
+
+			SDL.Rect destRect = .((int32)x, (int32)y, surface.w * 2, surface.h * 2);
+			SDL.RenderCopy(mRenderer, texture, &srcRect, &destRect);
+			SDL.FreeSurface(surface);
+			SDL.DestroyTexture(texture);
+		}
+
+		public void DrawHUD()
+		{
+			// Black background
+			SDL.SetRenderDrawColor(mRenderer, 0, 0, 0, 0);
+			SDL.Rect blackRect = .(0, 0, mWidth, 64);
+			SDL.RenderFillRect(mRenderer, &blackRect);
+			// White strip
+			SDL.SetRenderDrawColor(mRenderer, 255, 255, 255, 255);
+			SDL.Rect whiteRect = .(0, blackRect.h, mWidth, 8);
+			SDL.RenderFillRect(mRenderer, &whiteRect);
+
+			// Drawing hearts
+			int hearts = ActivePlayer.Health;
+			Image image = Images.Heart;
+
+			for (int i = 0; i < hearts; i++)
+			{
+				float x = 8 + i * 54;
+				float y = 8;
+	
+				SDL.Rect srcRect = .(0, 0, image.mSurface.w, image.mSurface.h);
+				SDL.Rect destRect = .((int32)x, (int32)y, image.mSurface.w * 9, image.mSurface.h * 9);
+				SDL.RenderCopy(gGameApp.mRenderer, image.mTexture, &srcRect, &destRect);
+			}
+
+			// Score
+			float scoreX = gGameApp.mWidth - 50;
+			float scoreY = 8;
+			SDL.Color color = .(255, 255 ,255 , 255);
+			DrawString(scoreX, scoreY, scope String()..AppendF("{}", Score), color, TextAlign.Right);
 		}
 
 		public override void Draw()
@@ -69,6 +148,8 @@ namespace BeefGrunio
 
 			for (var entity in entities)
 				entity.Draw();
+
+			DrawHUD();
 		}
 
 		void AddEntity(Entity e)
@@ -129,18 +210,22 @@ namespace BeefGrunio
 			base.Update();
 
 			// Sky box movement
-			skybox.posX -= Math.Clamp(skybox.posX - Skybox.SkyboxSpeed, 2, mWidth - 10);
+			skybox.posX -= Math.Clamp(skybox.posX - Skybox.SkyboxSpeed, 1, mWidth - 10);
 			HandleInputs();
-			CarrotSpawner();
 
+			CarrotSpawner();
 			for (var carrot in carrots)
 				carrot.Update();
 		}
 
 		void CarrotSpawner()
 		{
+			float spawnFrequency = CarrotSpawnFrequency;
+			if (HardMode)
+				spawnFrequency /= 2;
+
 			currentSpawnerTimer++;
-			if (currentSpawnerTimer < CarrotSpawnFrequency)
+			if (currentSpawnerTimer < spawnFrequency)
 				return;
 
 			currentSpawnerTimer = 0;

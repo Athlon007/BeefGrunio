@@ -20,6 +20,9 @@ namespace BeefGrunio
 
 		public override void Draw()
 		{
+			if (Health <= 0)
+				return;
+
 			if (!isMoving)
 			{
 				framesCount = 0;
@@ -75,7 +78,7 @@ namespace BeefGrunio
 
 			if (Health <= 0)
 			{
-				posX = 9999;
+				posX = -9999;
 			}
 		}
 

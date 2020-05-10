@@ -14,8 +14,8 @@ namespace BeefGrunio
 
 		public this()
 		{
-			posX = 999;
-			posY = 999;
+			posX = -999;
+			posY = -999;
 		}
 
 		public void Start(int randomNumber, float position)
@@ -51,14 +51,20 @@ namespace BeefGrunio
 		{
 			if (!isInitialized) return;
 
-			posY = Math.Clamp(posY + CarrotSpeed, 10, gGameApp.mWidth - 10);
+			float speed = CarrotSpeed;
+			if (gGameApp.HardMode)
+				speed *= 1.5f;
+
+			posY = Math.Clamp(posY + speed, 10, gGameApp.mWidth - 10);
 
 			// Detect collision with player and check if the player is a correct character.
 			SDL.Rect playerBoundingBox = .(-60, -100, 180, 160);
 			if (playerBoundingBox.Contains((.)(posX - gGameApp.ActivePlayer.posX), (.)(posY - gGameApp.ActivePlayer.posY)))
 			{
+				// Ignore collisions, if the character doesn't match the color.
 				if (gGameApp.ActivePlayer.isDida && !IsWhite) return;
 				if (!gGameApp.ActivePlayer.isDida && IsWhite) return;
+				gGameApp.Score++;
 				Finish();
 				return;
 			}
