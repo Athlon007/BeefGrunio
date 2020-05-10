@@ -11,10 +11,38 @@ namespace BeefGrunio
 
 	class GameApp : SDLApp
 	{
+		// Game management
+		public enum GameStates { Title, Menu, Game, Score, Credits };
+		public GameStates ActiveState = GameStates.Title;
+
+		// Main Menu
+		const int32 maxMenuValue = 2;
+		int32 activeOption;
+		int32 ActiveOption
+		{
+			get
+			{
+				return activeOption;
+			}
+			set
+			{
+				activeOption = value;
+				if (activeOption > maxMenuValue)
+					activeOption = 0;
+
+				if (activeOption < 0)
+					activeOption = maxMenuValue;
+			}
+		}
+		bool isMoveKeyHeld;
+		const int CreditsAnimationSpeed = 128;
+		float creditsFramesCount;
+
+		// World
 		Skybox skybox ~ delete _;
 		World world ~ delete _;
 
-		public Player ActivePlayer;
+		// Score
 		int score;
 		public int Score
 		{
@@ -32,29 +60,66 @@ namespace BeefGrunio
 				}
 			}
 		}
+
 		public bool HardMode;
 
 
+		// Entities
+		public Player ActivePlayer;
+		bool isSwitchKeyDown;
 		List <Entity> entities = new List<Entity>() ~ DeleteContainerAndItems!(_);
 		List <Carrot> carrots = new List<Carrot>() ~ DeleteContainerAndItems!(_);
-
-		bool isSwitchKeyDown;
 
 		// Carrots data
 		const float CarrotSpawnFrequency = 120;
 		float currentSpawnerTimer;
 		int lastCarrot;
 
+		// Misc
 		Random randomizer ~ delete _;
-
 		Font font ~ delete _;
 
 		public this()
 		{
 			gGameApp = this;
+		}
 
+		public ~this()
+		{
+			Images.Dispose();
+			Sounds.Dispose();
+		}
+
+		public new void Init()
+		{
+			base.Init();
+			Images.Init();
+			Sounds.Init();
+			font = new Font();
+			font.Load("font.ttf", 24);
 			skybox = new Skybox();
 			world = new World();
+
+			SDLMixer.PlayMusic(Sounds.Menu, -1);
+		}
+
+		void LoadMenu()
+		{
+			ActiveState = GameStates.Menu;
+			ActiveOption = 0;
+		}
+
+		void LoadCredits()
+		{
+			ActiveState = GameStates.Credits;
+		}
+
+		void LoadGame()
+		{
+			ActiveState = GameStates.Game;
+			HardMode = false;
+			score = 0;
+
 			ActivePlayer = new Player();
 			AddEntity(ActivePlayer);
 
@@ -72,28 +137,8 @@ namespace BeefGrunio
 			}
 		}
 
-		public ~this()
-		{
-			Images.Dispose();
-			Sounds.Dispose();
-		}
-
-		public new void Init()
-		{
-			base.Init();
-			Images.Init();
-			Sounds.Init();
-			font = new Font();
-			font.Load("font.ttf", 24);
-
-			HardMode = false;
-			score = 0;
-
-			SDLMixer.PlayMusic(Sounds.Menu, -1);
-		}
-
 		public enum TextAlign { Left, Center, Right };
-		public void DrawString(float x, float y, String str, SDL.Color color, TextAlign align = TextAlign.Left)
+		public void DrawString(float x, float y, String str, SDL.Color color, int32 fontScale, TextAlign align = TextAlign.Left)
 		{
 			var x;
 
@@ -110,7 +155,7 @@ namespace BeefGrunio
 					x -= 25 * str.Length;
 			}
 
-			SDL.Rect destRect = .((int32)x, (int32)y, surface.w * 2, surface.h * 2);
+			SDL.Rect destRect = .((int32)x, (int32)y, surface.w * fontScale, surface.h * fontScale);
 			SDL.RenderCopy(mRenderer, texture, &srcRect, &destRect);
 			SDL.FreeSurface(surface);
 			SDL.DestroyTexture(texture);
@@ -142,26 +187,136 @@ namespace BeefGrunio
 			}
 
 			// Score
-			float scoreX = gGameApp.mWidth - 50;
+			float scoreX = mWidth - 50;
 			float scoreY = 8;
-			SDL.Color color = .(255, 255 ,255 , 255);
-			DrawString(scoreX, scoreY, scope String()..AppendF("{}", Score), color, TextAlign.Right);
+			SDL.Color color = .(255, 255, 255, 255);
+			DrawString(scoreX, scoreY, scope String()..AppendF("{}", Score), color, 2, TextAlign.Right);
+		}
+
+		void DrawMenu()
+		{
+			SDL.Color color = .(0, 0, 0, 255);
+			DrawString(mWidth / 2 - 50, 150, "START", color, 2, TextAlign.Center);
+			DrawString(mWidth / 2 - 50, 300, "CREDITS", color, 2, TextAlign.Center);
+			DrawString(mWidth / 2 - 50, 450, "EXIT", color, 2, TextAlign.Center);
+
+			// Credits
+			DrawString(8, mHeight - 50, "Copyright © Athlon 2020", color, 1);
+
+			DrawString(mWidth - 50, mHeight - 50, "1.0", color, 1, TextAlign.Right);
+
+			// Draw indicator															  .
+		 	Image image = Images.Grunio[0];
+			SDL.Rect srcRect = .(0, 0, image.mSurface.w, image.mSurface.h);
+			SDL.Rect destRect = .(280,150 + 150 * ActiveOption, image.mSurface.w * 5, image.mSurface.h * 5);
+			SDL.RenderCopy(mRenderer, image.mTexture, &srcRect, &destRect);
+		}
+
+		void DrawCredits()
+		{
+			Image title = Images.Credits;
+			SDL.Rect srcRect = .(0, 0, title.mSurface.w, title.mSurface.h);
+			SDL.Rect destRect = .(0, 0, mWidth, mHeight);
+			SDL.RenderCopy(mRenderer, title.mTexture, &srcRect, &destRect);
+
+			SDL.Color color = .(0, 0, 0, 255);
+			DrawString(mWidth / 2, 250, "Made by Konrad \"Athlon\" Figura", color, 1, TextAlign.Center);
+			DrawString(mWidth / 2, 350, "athlon.kkmr.pl", color, 1, TextAlign.Center);
+			DrawString(mWidth / 2, 450, "Original game made by arhn.eu", color, 1, TextAlign.Center);
+
+			// Sleeping guinea pigs
+			creditsFramesCount +=1;
+			if (creditsFramesCount >= CreditsAnimationSpeed)
+				creditsFramesCount = 0;
+
+			Image sleep = creditsFramesCount >= CreditsAnimationSpeed / 2 ? Images.GuineaPigs[1] : Images.GuineaPigs[0];
+			SDL.Rect sleepSrcRect = .(0, 0, sleep.mSurface.w, sleep.mSurface.h);
+			SDL.Rect sleepDestRect = .(50, 500, (int32)(mWidth * 0.24f), (int32)(mHeight * 0.2f));
+			SDL.RenderCopy(mRenderer, sleep.mTexture, &sleepSrcRect, &sleepDestRect);
 		}
 
 		public override void Draw()
 		{
 			skybox.Draw();
-			world.Draw();
 
-			for (var entity in entities)
-				entity.Draw();
+			if (ActiveState == GameStates.Title)
+			{
+				Image title = Images.Title;
+				SDL.Rect srcRect = .(0, 0, title.mSurface.w, title.mSurface.h);
+				SDL.Rect destRect = .(0, 0, mWidth, mHeight);
+				SDL.RenderCopy(mRenderer, title.mTexture, &srcRect, &destRect);
+			}
 
-			DrawHUD();
+			if (ActiveState == GameStates.Menu)
+			{
+				DrawMenu();
+			}
+
+			if (ActiveState == GameStates.Credits)
+			{
+				DrawCredits();
+			}
+
+			if (ActiveState == GameStates.Game)
+			{
+				
+				world.Draw();
+				for (var entity in entities)
+					entity.Draw();
+	
+				DrawHUD();
+			}
 		}
 
 		void AddEntity(Entity e)
 		{
 			entities.Add(e);
+		}
+
+		void HandleTitleScreenInput()
+		{
+			if (IsKeyDown(.Space) && !isSwitchKeyDown)
+			{
+				isSwitchKeyDown = true;
+				LoadMenu();
+			}
+		}
+
+		void HandleMenuInput()
+		{
+			if (IsKeyDown(.Space) && !isSwitchKeyDown)
+			{
+				isSwitchKeyDown = true;
+				switch (ActiveOption)
+				{
+				case 0:
+					LoadGame();
+				case 1:
+					LoadCredits();
+				default:
+					LoadMenu();
+				}
+			}
+
+			if (!isMoveKeyHeld)
+			{
+				if (IsKeyDown(.Up))
+				{
+					ActiveOption--;
+					isMoveKeyHeld = true;
+				}
+
+				if (IsKeyDown(.Down))
+				{
+					ActiveOption++;
+					isMoveKeyHeld = true;
+				}
+			}
+
+			if (isMoveKeyHeld && (!IsKeyDown(.Up) && !IsKeyDown(.Down)))
+			{
+				isMoveKeyHeld = false;
+			}
 		}
 
 		void HandleInputs()
@@ -205,11 +360,6 @@ namespace BeefGrunio
 				ActivePlayer.isDida ^= true;
 				isSwitchKeyDown = true;
 			}
-
-			if (!IsKeyDown(.Space))
-			{
-				isSwitchKeyDown = false;
-			}
 		}
 
 		public override void Update()
@@ -218,11 +368,29 @@ namespace BeefGrunio
 
 			// Sky box movement
 			skybox.posX -= Math.Clamp(skybox.posX - Skybox.SkyboxSpeed, 1, mWidth - 10);
-			HandleInputs();
 
-			CarrotSpawner();
-			for (var carrot in carrots)
-				carrot.Update();
+			if (ActiveState == GameStates.Title || ActiveState == GameStates.Credits)
+			{
+				HandleTitleScreenInput();
+			}
+
+			if (ActiveState == GameStates.Menu)
+			{
+				HandleMenuInput();
+			}
+
+			if (ActiveState == GameStates.Game)
+			{
+				HandleInputs();
+				CarrotSpawner();
+				for (var carrot in carrots)
+					carrot.Update();
+			}
+
+			if (!IsKeyDown(.Space) && isSwitchKeyDown)
+			{
+				isSwitchKeyDown = false;
+			}
 		}
 
 		void CarrotSpawner()

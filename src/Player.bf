@@ -5,7 +5,7 @@ namespace BeefGrunio
 {
 	class Player : Entity
 	{
-		public const float MoveSpeed = 8f;
+		public const float MoveSpeed = 6f;
 		public const int AnimationSpeed = 8;
 		public const float SprintDelay = 32;
 

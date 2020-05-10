@@ -6,6 +6,11 @@ namespace BeefGrunio
 {
 	static class Images
 	{
+		// Menus
+		public static Image Title;
+		public static Image Credits;
+		public static List<Image> GuineaPigs = new .() ~ delete _;
+
 		// World
 		public static Image World1;
 		public static Image World2;
@@ -41,9 +46,14 @@ namespace BeefGrunio
 
 		public static Result<void> Init()
 		{
+			Title = Try!(Load("images/title.bmp"));
+			Credits = Try!(Load("images/credits.bmp"));
 			World1 = Try!(Load("images/world1.png"));
 			World2 = Try!(Load("images/world2.png"));
 			Sky = Try!(Load("images/sky.bmp"));
+
+			GuineaPigs.Add(Try!(Load("images/sleep1.png")));
+			GuineaPigs.Add(Try!(Load("images/sleep2.png")));
 
 			Grunio.Add(Try!(Load("images/grunio_0.png")));
 			Grunio.Add(Try!(Load("images/grunio_1.png")));
@@ -66,6 +76,7 @@ namespace BeefGrunio
 		public static void Dispose()
 		{
 			ClearAndDeleteItems(images);
+
 		}
 	}
 }
