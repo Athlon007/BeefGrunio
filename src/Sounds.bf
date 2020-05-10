@@ -6,13 +6,15 @@ namespace BeefGrunio
 {
 	class Sounds	
 	{
-		public static Sound Menu;
+		public static SDLMixer.Music* Menu;
 
 		static List<Sound> sounds = new .() ~ delete _;
+		static List<SDLMixer.Music*> musics = new .() ~ ClearAndDeleteItems(_);
 
 		public static void Dispose()
 		{
 			ClearAndDeleteItems(sounds);
+			//ClearAndDeleteItems(musics);
 		}
 
 		public static Result<Sound> Load(StringView fileName)
@@ -28,9 +30,22 @@ namespace BeefGrunio
 			return sound;
 		}
 
+		public static Result<SDLMixer.Music*> LoadMusic(char8* fileName)
+		{
+			SDLMixer.Music* music = SDLMixer.LoadMUS(fileName);
+			if (music == null)
+			{
+				delete music;
+				return .Err;
+			}
+
+			musics.Add(music);
+			return music;
+		}
+
 		public static Result<void> Init()
 		{
-			Menu = Try!(Load("sounds/menu.wav"));
+			Menu = Try!(LoadMusic("sounds/menu.wav"));
 			return .Ok;
 		}
 	}

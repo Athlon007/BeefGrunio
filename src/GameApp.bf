@@ -89,7 +89,7 @@ namespace BeefGrunio
 			HardMode = false;
 			score = 0;
 
-			PlaySound(Sounds.Menu, 1);
+			SDLMixer.PlayMusic(Sounds.Menu, -1);
 		}
 
 		public enum TextAlign { Left, Center, Right };
