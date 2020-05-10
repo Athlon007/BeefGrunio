@@ -26,7 +26,7 @@ namespace BeefGrunio
 			{
 				score = value;
 
-				if (score > 2)
+				if (score >= 50)
 				{
 					HardMode = true;
 				}
@@ -75,14 +75,21 @@ namespace BeefGrunio
 		public ~this()
 		{
 			Images.Dispose();
+			Sounds.Dispose();
 		}
 
 		public new void Init()
 		{
 			base.Init();
 			Images.Init();
+			Sounds.Init();
 			font = new Font();
 			font.Load("font.ttf", 24);
+
+			HardMode = false;
+			score = 0;
+
+			PlaySound(Sounds.Menu, 1);
 		}
 
 		public enum TextAlign { Left, Center, Right };
@@ -114,7 +121,7 @@ namespace BeefGrunio
 			// Black background
 			SDL.SetRenderDrawColor(mRenderer, 0, 0, 0, 0);
 			SDL.Rect blackRect = .(0, 0, mWidth, 64);
-			SDL.RenderFillRect(mRenderer, &blackRect);
+			SDL.RenderFillRect(mRenderer, &blackRect);		
 			// White strip
 			SDL.SetRenderDrawColor(mRenderer, 255, 255, 255, 255);
 			SDL.Rect whiteRect = .(0, blackRect.h, mWidth, 8);

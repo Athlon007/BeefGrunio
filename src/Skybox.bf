@@ -20,7 +20,7 @@ namespace BeefGrunio
 			Image image = Images.Sky;
 
 			SDL.Rect srcRect = .(0, 0, image.mSurface.w, image.mSurface.h);
-			SDL.Rect destRect = .((int32)x, 0, image.mSurface.w * 13, image.mSurface.h * 13);
+			SDL.Rect destRect = .((int32)x, 0, image.mSurface.w * 14, image.mSurface.h * 14);
 
 			SDL.RenderCopy(gGameApp.mRenderer, image.mTexture, &srcRect, &destRect);
 
