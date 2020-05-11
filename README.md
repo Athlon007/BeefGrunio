@@ -4,7 +4,7 @@
 [![](https://img.shields.io/github/v/release/Athlon007/BeefGrunio?style=for-the-badge)](https://github.com/Athlon007/BeefGrunio/releases)
 [![](https://img.shields.io/github/license/Athlon007/BeefGrunio?style=for-the-badge)](LICENSE.md)
 
-<img align="right" src="media/images/grunio0.png" alt="icon" style="image-rendering: pixelated;" width=128 />
+<img align="right" src="media/gitico.bmp" alt="icon" width=128 />
 
 Beef Grunio is a remake of [Gruniożerca Meta](https://github.com/arhneu/gruniozerca-meta) game originaly made for Gamebuino Meta, remade using [Beef](https://www.beeflang.org/) programming language in 3 days.
 
