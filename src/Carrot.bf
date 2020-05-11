@@ -16,6 +16,7 @@ namespace BeefGrunio
 		{
 			posX = -999;
 			posY = -999;
+			image = Images.Orange;
 		}
 
 		public void Init()
@@ -27,7 +28,14 @@ namespace BeefGrunio
 		public void Start(int randomNumber, float position)
 		{
 			IsWhite = randomNumber > 5;
-			image = IsWhite ? Images.White : Images.Orange;
+			if (gGameApp.BeefMode)
+			{
+				image = IsWhite ? Images.Ham : Images.Beef;
+			}
+			else
+			{
+				image = IsWhite ? Images.White : Images.Orange;
+			}
 
 			isInitialized = true;
 			posX = position;
@@ -71,6 +79,7 @@ namespace BeefGrunio
 				if (gGameApp.ActivePlayer.isDida && !IsWhite) return;
 				if (!gGameApp.ActivePlayer.isDida && IsWhite) return;
 				gGameApp.Score++;
+				gGameApp.PlayAccept();
 				Finish();
 				return;
 			}

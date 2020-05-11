@@ -29,6 +29,10 @@ namespace BeefGrunio
 		public static Image Orange;
 		public static Image White;
 
+		// Beef
+		public static Image Beef;
+		public static Image Ham;
+
 		// Heart
 		public static Image Heart;
 
@@ -76,6 +80,9 @@ namespace BeefGrunio
 
 			Orange = Try!(Load("images/orange.png"));
 			White = Try!(Load("images/white.png"));
+
+			Beef = Try!(Load("images/beef.png"));
+			Ham = Try!(Load("images/ham.png"));
 
 			Heart = Try!(Load("images/heart.png"));
 			

@@ -64,6 +64,7 @@ namespace BeefGrunio
 		}
 
 		public bool HardMode;
+		public bool BeefMode;
 
 
 		// Entities
@@ -110,8 +111,8 @@ namespace BeefGrunio
 			for (int i = 0; i <= 3; i++)
 			{
 				Carrot carrot = new Carrot();
-				carrots.Add(carrot);
-				entities.Add(carrot);
+				AddCarrot(carrot);
+				AddEntity(carrot);
 			}
 		}
 
@@ -119,6 +120,7 @@ namespace BeefGrunio
 		{
 			SDLMixer.PauseMusic();
 			SDLMixer.PlayMusic(Sounds.Menu, -1);
+			SDLMixer.VolumeMusic(50);
 			ActiveState = GameStates.Menu;
 			ActiveOption = 0;
 		}
@@ -134,6 +136,7 @@ namespace BeefGrunio
 		{
 			HardMode = false;
 			score = 0;
+			BeefMode = GetRandomNumber(0, 50) == 0;
 
 			ActivePlayer.Init();
 
@@ -308,12 +311,16 @@ namespace BeefGrunio
 			default:
 				return;
 			}
-
 		}
 
 		void AddEntity(Entity e)
 		{
 			entities.Add(e);
+		}
+
+		void AddCarrot(Carrot e)
+		{
+			carrots.Add(e);
 		}
 
 		void HandleTitleScreenInput()
@@ -322,6 +329,7 @@ namespace BeefGrunio
 			{
 				isSwitchKeyDown = true;
 				LoadMenu();
+				PlayAccept();
 			}
 		}
 
@@ -341,18 +349,21 @@ namespace BeefGrunio
 				default:
 					LoadMenu();
 				}
+				PlayAccept();
 			}
 
 			if (!isMoveKeyHeld)
 			{
 				if (IsKeyDown(.Up))
 				{
+					PlaySelect();
 					ActiveOption--;
 					isMoveKeyHeld = true;
 				}
 
 				if (IsKeyDown(.Down))
 				{
+					PlaySelect();
 					ActiveOption++;
 					isMoveKeyHeld = true;
 				}
@@ -451,21 +462,31 @@ namespace BeefGrunio
 			currentSpawnerTimer = 0;
 
 			Carrot carrot = carrots[lastCarrot];
-			carrot.Start(GetRandomNumber(), GetRandomPosition());
+			carrot.Start(GetRandomNumber(0, 11), GetRandomPosition());
 
 			lastCarrot++;
 			if (lastCarrot > carrots.Count - 1)
 				lastCarrot = 0;
 		}
 
-		int GetRandomNumber()
+		int GetRandomNumber(int min, int max)
 		{
-			return randomizer.Next(0, 11);
+			return randomizer.Next(min, max);
 		}
 
 		float GetRandomPosition()
 		{
 			return (float)randomizer.Next(0, mWidth - 60);
+		}
+
+		public void PlayAccept()
+		{
+			PlaySound(Sounds.Accept, 1);
+		}
+
+		void PlaySelect()
+		{
+			PlaySound(Sounds.Select, 1);
 		}
 	}
 }

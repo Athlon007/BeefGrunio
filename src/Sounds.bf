@@ -9,6 +9,9 @@ namespace BeefGrunio
 		public static SDLMixer.Music* Menu;
 		public static SDLMixer.Music* GameOver;
 
+		public static Sound Accept;
+		public static Sound Select;
+
 		static List<Sound> sounds = new .() ~ delete _;
 		static List<SDLMixer.Music*> musics = new .() ~ ClearAndDeleteItems(_);
 
@@ -48,6 +51,8 @@ namespace BeefGrunio
 		{
 			Menu = Try!(LoadMusic("sounds/menu.wav"));
 			GameOver = Try!(LoadMusic("sounds/gameover.wav"));
+			Accept = Try!(Load("sounds/accept.wav"));
+			Select = Try!(Load("sounds/select.wav"));
 			return .Ok;
 		}
 	}
