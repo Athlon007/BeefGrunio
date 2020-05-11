@@ -129,7 +129,6 @@ namespace BeefGrunio
 		{
 			creditsFramesCount = 0;
 			ActiveState = GameStates.Credits;
-			ClearAndDeleteItems(carrots);
 		}
 
 		void LoadGame()

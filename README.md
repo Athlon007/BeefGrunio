@@ -14,10 +14,6 @@ It is my personal coding challenge to see, if I can make a simple game in a new 
 
 Collect carrots falling from the sky. Use arrows keys to move around and space to change the color of the character corresponding to the falling carrot.
 
-## Known issues
-
-- The game will crash, if you enter the credits, and then try to play the game
-
 ## Compiling from source code
 
 In order to compile the game from the source code, you need to get yourself the [Beef IDE](https://www.beeflang.org/) and open the project in it.
