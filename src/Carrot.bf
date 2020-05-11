@@ -18,6 +18,12 @@ namespace BeefGrunio
 			posY = -999;
 		}
 
+		public void Init()
+		{
+			posX = -999;
+			posY = -999;
+		}
+
 		public void Start(int randomNumber, float position)
 		{
 			IsWhite = randomNumber > 5;

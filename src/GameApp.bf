@@ -36,7 +36,9 @@ namespace BeefGrunio
 		}
 		bool isMoveKeyHeld;
 		const int CreditsAnimationSpeed = 128;
-		float creditsFramesCount;
+		int creditsFramesCount;
+		const int ScoreAnimationSpeed = 60;
+		int scoreFramesCount;
 
 		// World
 		Skybox skybox ~ delete _;
@@ -88,6 +90,7 @@ namespace BeefGrunio
 		{
 			Images.Dispose();
 			Sounds.Dispose();
+		 	ClearAndDeleteItems(carrots);
 		}
 
 		public new void Init()
@@ -99,42 +102,54 @@ namespace BeefGrunio
 			font.Load("font.ttf", 24);
 			skybox = new Skybox();
 			world = new World();
+			randomizer = new Random(DateTime.Now.Millisecond);
 
-			SDLMixer.PlayMusic(Sounds.Menu, -1);
+			ActivePlayer = new Player();
+			AddEntity(ActivePlayer);
+
+			for (int i = 0; i <= 3; i++)
+			{
+				Carrot carrot = new Carrot();
+				carrots.Add(carrot);
+				entities.Add(carrot);
+			}
 		}
 
 		void LoadMenu()
 		{
+			SDLMixer.PauseMusic();
+			SDLMixer.PlayMusic(Sounds.Menu, -1);
 			ActiveState = GameStates.Menu;
 			ActiveOption = 0;
 		}
 
 		void LoadCredits()
 		{
+			creditsFramesCount = 0;
 			ActiveState = GameStates.Credits;
+			ClearAndDeleteItems(carrots);
 		}
 
 		void LoadGame()
 		{
-			ActiveState = GameStates.Game;
 			HardMode = false;
 			score = 0;
 
-			ActivePlayer = new Player();
-			AddEntity(ActivePlayer);
+			ActivePlayer.Init();
 
-			ActivePlayer.posX = gGameApp.mWidth / 2;
-			ActivePlayer.posY = 550;
-
-			randomizer = new Random(DateTime.Now.Millisecond);
 			currentSpawnerTimer = CarrotSpawnFrequency;
+			ActiveState = GameStates.Game;
+		}
 
-			for (int i = 0; i <= 10; i++)
-			{
-				Carrot carrot = new Carrot();
-				carrots.Add(carrot);
-				entities.Add(carrot);
-			}
+		public void GameOver()
+		{
+			scoreFramesCount = 0;
+			ActiveState = GameStates.Score;
+			SDLMixer.PauseMusic();
+			SDLMixer.PlayMusic(Sounds.GameOver, 0);
+
+			for (var carrot in carrots)
+				carrot.Init();
 		}
 
 		public enum TextAlign { Left, Center, Right };
@@ -150,7 +165,7 @@ namespace BeefGrunio
 			if (align != TextAlign.Left)
 			{
 				if (align == TextAlign.Center)
-					x -= surface.w / 2;
+					x -= surface.w / 2 * fontScale;
 				else if (align == TextAlign.Right && str.Length > 1)
 					x -= 25 * str.Length;
 			}
@@ -196,19 +211,25 @@ namespace BeefGrunio
 		void DrawMenu()
 		{
 			SDL.Color color = .(0, 0, 0, 255);
-			DrawString(mWidth / 2 - 50, 150, "START", color, 2, TextAlign.Center);
-			DrawString(mWidth / 2 - 50, 300, "CREDITS", color, 2, TextAlign.Center);
-			DrawString(mWidth / 2 - 50, 450, "EXIT", color, 2, TextAlign.Center);
+			DrawString(mWidth / 2 + 10, 50, "GRUNIOŻERCA", color, 3, TextAlign.Center);
+			DrawString(925, 125, "BEEF Edition", color, 1, TextAlign.Right);
+			DrawString(mWidth / 2 + 10, 200, "START", color, 2, TextAlign.Center);
+			DrawString(mWidth / 2 + 10, 350, "CREDITS", color, 2, TextAlign.Center);
+			DrawString(mWidth / 2 + 10, 500, "EXIT", color, 2, TextAlign.Center);
+
+			// Tip
+			DrawString(mWidth / 2 + 10, 600, "Up/Down - Navigate", color, 1, TextAlign.Center);
+			DrawString(mWidth / 2 + 10, 630, "Space - Accept", color, 1, TextAlign.Center);
 
 			// Credits
-			DrawString(8, mHeight - 50, "Copyright © Athlon 2020", color, 1);
+			DrawString(30, mHeight - 50, "Copyright © Athlon 2020", color, 1);
 
 			DrawString(mWidth - 50, mHeight - 50, "1.0", color, 1, TextAlign.Right);
 
 			// Draw indicator															  .
 		 	Image image = Images.Grunio[0];
 			SDL.Rect srcRect = .(0, 0, image.mSurface.w, image.mSurface.h);
-			SDL.Rect destRect = .(280,150 + 150 * ActiveOption, image.mSurface.w * 5, image.mSurface.h * 5);
+			SDL.Rect destRect = .(250, 200 + 150 * ActiveOption, image.mSurface.w * 5, image.mSurface.h * 5);
 			SDL.RenderCopy(mRenderer, image.mTexture, &srcRect, &destRect);
 		}
 
@@ -225,47 +246,69 @@ namespace BeefGrunio
 			DrawString(mWidth / 2, 450, "Original game made by arhn.eu", color, 1, TextAlign.Center);
 
 			// Sleeping guinea pigs
-			creditsFramesCount +=1;
+			creditsFramesCount++;
 			if (creditsFramesCount >= CreditsAnimationSpeed)
 				creditsFramesCount = 0;
 
 			Image sleep = creditsFramesCount >= CreditsAnimationSpeed / 2 ? Images.GuineaPigs[1] : Images.GuineaPigs[0];
 			SDL.Rect sleepSrcRect = .(0, 0, sleep.mSurface.w, sleep.mSurface.h);
-			SDL.Rect sleepDestRect = .(50, 500, (int32)(mWidth * 0.24f), (int32)(mHeight * 0.2f));
+			SDL.Rect sleepDestRect = .(50, 560, (int32)(mWidth * 0.3f), (int32)(mHeight * 0.2f));
 			SDL.RenderCopy(mRenderer, sleep.mTexture, &sleepSrcRect, &sleepDestRect);
+		}
+
+		void DrawGameOver()
+		{
+			Image gameOver = Images.GameOver;
+			SDL.Rect srcRect = .(0, 0, gameOver.mSurface.w, gameOver.mSurface.h);
+			SDL.Rect destRect = .(0, 0, mWidth, mHeight);
+			SDL.RenderCopy(mRenderer, gameOver.mTexture, &srcRect, &destRect);
+
+			SDL.Color color = .(255, 255, 255, 255);
+			DrawString(mWidth / 2, 300, scope String()..AppendF("YOUR SCORE: {}", Score), color, 2, TextAlign.Center);
+			// DrawString(mWidth / 2, 350, scope String()..AppendF("TOP SCORE: {}", Save.GetTopScore()), color, 2, TextAlign.Center);
+			// TODO: Implement top score saving when the score saving finally gets implemented.
+
+			scoreFramesCount++;
+			if (scoreFramesCount >= ScoreAnimationSpeed)
+				scoreFramesCount = 0;
+
+			Image grunio = scoreFramesCount >= ScoreAnimationSpeed / 2 ? Images.GrunioResult[1] : Images.GrunioResult[0];
+			SDL.Rect grunioSrcRect = .(0, 0, grunio.mSurface.w, grunio.mSurface.h);
+			SDL.Rect grunioDestRect = .(50, 550, (int32)(mWidth * 0.24f), (int32)(mHeight * 0.2f));
+			SDL.RenderCopy(mRenderer, grunio.mTexture, &grunioSrcRect, &grunioDestRect);
+
+			Image dida = scoreFramesCount >= ScoreAnimationSpeed / 2 ? Images.DidaResult[1] : Images.DidaResult[0];
+			SDL.Rect didaDestRect = .(728, 550, (int32)(mWidth * 0.24f), (int32)(mHeight * 0.2f));
+			SDL.RenderCopy(mRenderer, dida.mTexture, &grunioSrcRect, &didaDestRect);
 		}
 
 		public override void Draw()
 		{
 			skybox.Draw();
 
-			if (ActiveState == GameStates.Title)
+			switch (ActiveState)
 			{
+			case GameStates.Title:
 				Image title = Images.Title;
 				SDL.Rect srcRect = .(0, 0, title.mSurface.w, title.mSurface.h);
 				SDL.Rect destRect = .(0, 0, mWidth, mHeight);
 				SDL.RenderCopy(mRenderer, title.mTexture, &srcRect, &destRect);
-			}
-
-			if (ActiveState == GameStates.Menu)
-			{
+			case GameStates.Menu:
 				DrawMenu();
-			}
-
-			if (ActiveState == GameStates.Credits)
-			{
+			case GameStates.Credits:
 				DrawCredits();
-			}
-
-			if (ActiveState == GameStates.Game)
-			{
-				
+			case GameStates.Score:
+				DrawGameOver();
+			case GameStates.Game:
 				world.Draw();
 				for (var entity in entities)
 					entity.Draw();
-	
+
 				DrawHUD();
+			default:
+				return;
 			}
+
 		}
 
 		void AddEntity(Entity e)
@@ -293,6 +336,8 @@ namespace BeefGrunio
 					LoadGame();
 				case 1:
 					LoadCredits();
+				case 2:
+					System.GC.Shutdown();
 				default:
 					LoadMenu();
 				}
@@ -369,22 +414,22 @@ namespace BeefGrunio
 			// Sky box movement
 			skybox.posX -= Math.Clamp(skybox.posX - Skybox.SkyboxSpeed, 1, mWidth - 10);
 
-			if (ActiveState == GameStates.Title || ActiveState == GameStates.Credits)
+			switch (ActiveState)
 			{
-				HandleTitleScreenInput();
-			}
-
-			if (ActiveState == GameStates.Menu)
-			{
+			case GameStates.Menu:
 				HandleMenuInput();
-			}
-
-			if (ActiveState == GameStates.Game)
-			{
+			case GameStates.Game:
 				HandleInputs();
 				CarrotSpawner();
 				for (var carrot in carrots)
 					carrot.Update();
+
+				if (ActivePlayer.Health <= 0)
+				{
+					gGameApp.GameOver();
+				}
+			default:
+				HandleTitleScreenInput();
 			}
 
 			if (!IsKeyDown(.Space) && isSwitchKeyDown)

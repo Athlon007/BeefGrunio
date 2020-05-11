@@ -7,6 +7,7 @@ namespace BeefGrunio
 	class Sounds	
 	{
 		public static SDLMixer.Music* Menu;
+		public static SDLMixer.Music* GameOver;
 
 		static List<Sound> sounds = new .() ~ delete _;
 		static List<SDLMixer.Music*> musics = new .() ~ ClearAndDeleteItems(_);
@@ -46,6 +47,7 @@ namespace BeefGrunio
 		public static Result<void> Init()
 		{
 			Menu = Try!(LoadMusic("sounds/menu.wav"));
+			GameOver = Try!(LoadMusic("sounds/gameover.wav"));
 			return .Ok;
 		}
 	}

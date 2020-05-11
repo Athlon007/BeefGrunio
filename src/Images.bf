@@ -9,7 +9,10 @@ namespace BeefGrunio
 		// Menus
 		public static Image Title;
 		public static Image Credits;
+		public static Image GameOver;
 		public static List<Image> GuineaPigs = new .() ~ delete _;
+		public static List<Image> GrunioResult = new .() ~ delete _;
+		public static List<Image> DidaResult = new .() ~ delete _;
 
 		// World
 		public static Image World1;
@@ -48,12 +51,18 @@ namespace BeefGrunio
 		{
 			Title = Try!(Load("images/title.bmp"));
 			Credits = Try!(Load("images/credits.bmp"));
+			GameOver = Try!(Load("images/gameover.bmp"));
 			World1 = Try!(Load("images/world1.png"));
 			World2 = Try!(Load("images/world2.png"));
 			Sky = Try!(Load("images/sky.bmp"));
 
 			GuineaPigs.Add(Try!(Load("images/sleep1.png")));
 			GuineaPigs.Add(Try!(Load("images/sleep2.png")));
+
+			GrunioResult.Add(Try!(Load("images/gruniores0.png")));
+			GrunioResult.Add(Try!(Load("images/gruniores1.png")));
+			DidaResult.Add(Try!(Load("images/didares0.png")));
+			DidaResult.Add(Try!(Load("images/didares1.png")));
 
 			Grunio.Add(Try!(Load("images/grunio_0.png")));
 			Grunio.Add(Try!(Load("images/grunio_1.png")));

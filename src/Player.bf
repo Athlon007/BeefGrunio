@@ -14,15 +14,20 @@ namespace BeefGrunio
 		public bool isDida;
 
 		public float moveTime;
-		public int Health = 3;
+		public int Health;
+		const int DefaultHealth = 3;
 
 		float framesCount;
 
+		public void Init()
+		{
+			Health = DefaultHealth;
+			posX = gGameApp.mWidth / 2 - 70;
+			posY = 550;
+		}
+
 		public override void Draw()
 		{
-			if (Health <= 0)
-				return;
-
 			if (!isMoving)
 			{
 				framesCount = 0;
@@ -75,11 +80,6 @@ namespace BeefGrunio
 			}
 
 			SDL.RenderCopy(gGameApp.mRenderer, image.mTexture, &srcRect, &destRect);
-
-			if (Health <= 0)
-			{
-				posX = -9999;
-			}
 		}
 
 		public bool IsTouchingRightSide()
