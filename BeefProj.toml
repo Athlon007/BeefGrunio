@@ -5,3 +5,11 @@ Dependencies = {corlib = "*", SDL2 = "*"}
 Name = "BeefGrunio"
 TargetType = "BeefGUIApplication"
 StartupObject = "BeefGrunio.Program"
+
+[Platform.Windows]
+IconFile = "ico.ico"
+Description = "Gruniozerca Meta made with BEEF language."
+Company = "Athlon"
+Copyright = "Copyright © Athlon 2020"
+FileVersion = "1.0"
+ProductVersion = "1.0"

@@ -203,7 +203,7 @@ namespace BeefGrunio
 
 			// Score
 			float scoreX = mWidth - 50;
-			float scoreY = 8;
+			float scoreY = 10;
 			SDL.Color color = .(255, 255, 255, 255);
 			DrawString(scoreX, scoreY, scope String()..AppendF("{}", Score), color, 2, TextAlign.Right);
 		}
@@ -298,7 +298,7 @@ namespace BeefGrunio
 			case GameStates.Credits:
 				DrawCredits();
 			case GameStates.Score:
-				DrawGameOver();
+				DrawGameOver();												 
 			case GameStates.Game:
 				world.Draw();
 				for (var entity in entities)
@@ -337,7 +337,7 @@ namespace BeefGrunio
 				case 1:
 					LoadCredits();
 				case 2:
-					System.GC.Shutdown();
+					SDL.Quit();
 				default:
 					LoadMenu();
 				}

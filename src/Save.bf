@@ -13,7 +13,7 @@ namespace BeefGrunio
 			score.ToString(text);
 			File.WriteAllText(SaveFile, text, true);
 		}
-
+		/*
 		public static int GetTopScore()
 		{
 			// Unfortunately, support for file reading is not implemented into the BEEF as the time of writing this file,
@@ -34,5 +34,6 @@ namespace BeefGrunio
 
 			return int.Parse(fileContent);
 		}
+		*/
 	}
 }

@@ -64,15 +64,15 @@ namespace BeefGrunio
 			DidaResult.Add(Try!(Load("images/didares0.png")));
 			DidaResult.Add(Try!(Load("images/didares1.png")));
 
-			Grunio.Add(Try!(Load("images/grunio_0.png")));
-			Grunio.Add(Try!(Load("images/grunio_1.png")));
-			GrunioL.Add(Try!(Load("images/grunio_0_l.png")));
-			GrunioL.Add(Try!(Load("images/grunio_1_l.png")));
+			Grunio.Add(Try!(Load("images/grunio0.png")));
+			Grunio.Add(Try!(Load("images/grunio1.png")));
+			GrunioL.Add(Try!(Load("images/grunio0l.png")));
+			GrunioL.Add(Try!(Load("images/grunio1l.png")));
 
-			Dida.Add(Try!(Load("images/dida_0.png")));
-			Dida.Add(Try!(Load("images/dida_1.png")));
-			DidaL.Add(Try!(Load("images/dida_0_l.png")));
-			DidaL.Add(Try!(Load("images/dida_1_l.png")));
+			Dida.Add(Try!(Load("images/dida0.png")));
+			Dida.Add(Try!(Load("images/dida1.png")));
+			DidaL.Add(Try!(Load("images/dida0l.png")));
+			DidaL.Add(Try!(Load("images/dida1l.png")));
 
 			Orange = Try!(Load("images/orange.png"));
 			White = Try!(Load("images/white.png"));
@@ -85,7 +85,6 @@ namespace BeefGrunio
 		public static void Dispose()
 		{
 			ClearAndDeleteItems(images);
-
 		}
 	}
 }
